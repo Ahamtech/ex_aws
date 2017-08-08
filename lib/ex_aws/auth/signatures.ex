@@ -8,6 +8,12 @@ defmodule ExAws.Auth.Signatures do
     |> hmac_sha256(string_to_sign)
     |> bytes_to_hex
   end
+  
+  def generate_signature_v2(service, config, datetime, string_to_sign) do
+    config[:secret_access_key]
+    |> hmac_sha(string_to_sign)
+    |> Base.encode64
+  end
 
   defp signing_key(service, datetime, config) do
     ["AWS4", config[:secret_access_key]]
