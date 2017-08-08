@@ -24,7 +24,12 @@ defmodule ExAws.Request do
   def request_and_retry(_method, _url, _service, _config, _headers, _req_body, {:error, reason}), do: {:error, reason}
 
   def request_and_retry(method, url, service, config, headers, req_body, {:attempt, attempt}) do
-    full_headers = ExAws.Auth.headers(method, url, service, config, headers, req_body)
+    full_headers = 
+      if config[:aws_auth_version] == "2" do
+        ExAws.Auth.headers_v2(method, url, service, config, headers, req_body)
+      else
+        ExAws.Auth.headers(method, url, service, config, headers, req_body)
+      end
 
     url = replace_spaces(url)
 
